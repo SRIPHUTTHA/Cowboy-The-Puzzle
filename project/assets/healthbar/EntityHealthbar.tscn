@@ -4,9 +4,7 @@
 [ext_resource path="res://assets/healthbar/healthbar_empty.png" type="Texture" id=2]
 [ext_resource path="res://assets/healthbar/healthbar_full.png" type="Texture" id=3]
 
-[node name="EntityHealthbar" type="TextureProgress" groups=[
-"Healthbar",
-]]
+[node name="EntityHealthbar" type="TextureProgress" groups=["Healthbar"]]
 margin_right = 40.0
 margin_bottom = 40.0
 rect_scale = Vector2( 0.7, 0.5 )

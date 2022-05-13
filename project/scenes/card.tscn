@@ -89,7 +89,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 1 ),
+"times": PoolRealArray( 0.2, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
@@ -120,6 +120,9 @@ tracks/3/keys = {
 }
 
 [node name="card" type="Control"]
+margin_left = 1.0
+margin_right = 321.0
+margin_bottom = 504.0
 rect_min_size = Vector2( 320, 504 )
 script = ExtResource( 2 )
 __meta__ = {
@@ -128,8 +131,9 @@ __meta__ = {
 
 [node name="back" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0 )
-rotation = 0.610232
-scale = Vector2( 2, 2 )
+position = Vector2( 31.9556, 0 )
+rotation = 0.549209
+scale = Vector2( 1.6, 2 )
 texture = ExtResource( 1 )
 centered = false
 hframes = 9
