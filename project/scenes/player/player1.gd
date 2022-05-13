@@ -1,46 +1,41 @@
 extends "res://scenes/player/EntityBase.gd"
 
-export(PackedScene) var DAGGER: PackedScene = preload("res://scenes/projectiles/PlayerDagger.tscn")
+export(PackedScene) var SHOOT: PackedScene = preload("res://scenes/projectiles/PlayerDagger.tscn")
 
 onready var attackTimer = $AttackTimer
 
+const died_ef = preload("res://assets/fx/died/died_fx.tscn")
 
 func _physics_process(delta):
-	var input_dir = get_input_direction()
-	if input_dir != Vector2.ZERO:
-		# PLAYER IS MOVING
-		velocity = SPEED * input_dir
-		#animPlayer.play("run")
-		if input_dir.x != 0 and  sign(sprite.scale.x) != sign(input_dir.x):
-			sprite.scale.x *= -1
-	else:
-		# PLAYER IS IDLE
-		velocity = Vector2.ZERO
-		#animPlayer.play("Idle")
-	
 	if Input.is_action_just_pressed("attack") and attackTimer.is_stopped():
-		var dagger_direction = self.global_position.direction_to(get_global_mouse_position())
-		throw_dagger(dagger_direction)
-	
-	move()
+		var _shoot = self.global_position.direction_to(get_global_position())
+		shoot(_shoot)
 
-func throw_dagger(dagger_direction: Vector2):
-	if DAGGER:
-		var dagger = DAGGER.instance()
-		get_tree().current_scene.add_child(dagger)
-		dagger.global_position = self.global_position
+func shoot(_shoot: Vector2)-> void:
+	if SHOOT:
+		var shoot = SHOOT.instance()
+		get_tree().current_scene.add_child(shoot)
+		shoot.global_position = self.global_position
 		
-		var dagger_rotation = dagger_direction.angle()
-		dagger.rotation = dagger_rotation
-		
+		shoot.position = $BulletPoint.get_global_position()
+
 		attackTimer.start()
+		
 
-func get_input_direction() -> Vector2:
-	var input_dir: Vector2 = Vector2.ZERO
-	
-	input_dir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	input_dir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	input_dir = input_dir.normalized()
-	
-	return input_dir
+func spawn_effect(EFFECT: PackedScene, effect_position: Vector2 = global_position):
+	if EFFECT:
+		var effect = EFFECT.instance()
+		get_tree().current_scene.add_child(effect)
+		effect.global_position = effect_position
+		return effect
 
+func died():
+	spawn_effect(died_ef)
+	queue_free()
+	
+
+
+
+
+func _on_player1_died():
+	died()

@@ -3,8 +3,8 @@ extends "res://scripts/overlap/Hitbox.gd"
 export(int) var SPEED: int = 200
 
 func _physics_process(delta):
-	var direction = Vector2.RIGHT.rotated(rotation)
-	position += SPEED * direction * delta
+	var direction = Vector2.LEFT.rotated(rotation)
+	global_position += SPEED * direction * delta
 
 func destroy():
 	queue_free()

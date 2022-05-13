@@ -142,12 +142,16 @@ stream = ExtResource( 8 )
 position = Vector2( 740.834, 127.093 )
 scale = Vector2( 3, 3 )
 
+[node name="BulletPointt" type="Node2D" parent="player1"]
+position = Vector2( 35.0807, -3.93281 )
+
 [node name="player2" parent="." instance=ExtResource( 10 )]
 position = Vector2( 1134.67, 127.613 )
 scale = Vector2( 3, 3 )
 
-[node name="attackTimer" type="Timer" parent="."]
-one_shot = true
+[node name="BulletPointt2" type="Node2D" parent="player2"]
+position = Vector2( -38.5774, -2.99377 )
 
+[connection signal="shoot" from="." to="." method="_on_level_shoot"]
 [connection signal="pressed" from="ui/container/control/btnExit" to="." method="_on_btnExit_pressed"]
 [connection signal="timeout" from="timer" to="." method="_on_timer_timeout"]

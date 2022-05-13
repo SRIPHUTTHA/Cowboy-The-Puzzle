@@ -1,5 +1,4 @@
 extends Control
-
 export(int) var id: int = 17
 var state = "hide"
 var done:bool = false
@@ -26,6 +25,7 @@ func _on_touch_pressed() -> void:
 	if state == 'hide':
 		emit_signal("clicked", id)
 		_show()
+		
 
 func _hide() -> void:
 	# Esconde a carta novamente, criamos um timer apenas para ter uma randomização nos movimentos

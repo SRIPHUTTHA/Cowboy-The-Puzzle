@@ -1,16 +1,17 @@
 extends Node2D
-#################################
-onready var attackTimer = $AttackTimer
-export(PackedScene) var DAGGER: PackedScene = preload("res://scenes/projectiles/PlayerDagger.tscn")
-###################################
+
+signal shoot
+
+
 onready var cardScene = preload("res://scenes/card.tscn")
 onready var comboScene = preload("res://scenes/combo.tscn")
-
+onready var shoot = preload("res://scenes/player/player1.gd")
 var cards:Array = [0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16]
 
-var card_per_level:Array = [4,8,16,32]
+var card_per_level:Array = [4,8,16,32] #จำนวนการ์ด
 var col_per_level:Array = [2,4,8,8]
-var time_per_level:Array = [30,60,120,240]
+
+var time_per_round = 30  # เวลาต่อรอบ
 
 var points:int = 50
 var pointsOver:int = 25
@@ -20,7 +21,7 @@ var face_cards:int = 0
 var endgame:bool = false
 var combo:int = 0
 var total:int = 0
-var level:int = 1
+var level:int = 2 
 var time:int = 0
 
 onready var screenSize:Vector2 = get_viewport_rect().size
@@ -80,6 +81,7 @@ func _mark_card(_id) -> void:
 			
 			# marca ela como concluída
 			c._set_done(true)
+			
 
 func _clear_cards() -> void:
 	# removo todas as instancias das cartas do deck
@@ -87,16 +89,16 @@ func _clear_cards() -> void:
 		c.queue_free()
 
 func _on_timer_timeout() -> void:
-	var horas = floor(time / 3600);
-	var minutos = floor((time - (horas * 3600)) / 60);
-	var segundos = floor(time % 60);
+	var hour = floor(time / 3600);
+	var minute = floor((time - (hour * 3600)) / 60);
+	var second = floor(time % 60);
 	
-	if minutos < 10:
-		minutos = str("0",minutos)
-	if segundos < 10:
-		segundos = str("0",segundos)
+	if minute < 10:
+		minute = str("0",minute)
+	if second < 10:
+		second = str("0",second)
 	
-	$ui/timer.text = str(minutos, ":", segundos)
+	$ui/timer.text = str(minute, ":", second)
 	
 	time -= 1
 	if time <= 0:
@@ -122,7 +124,9 @@ func _new_game() -> void:
 	face_cards = 0
 	card_opened.clear()
 	combo = 0
-	time = time_per_level[level - 1]
+	###
+	time = time_per_round 
+	###
 	_clear_cards()
 		
 	var qtd_cards = card_per_level[level - 1]
@@ -169,20 +173,6 @@ func _new_game() -> void:
 	var rr = card_per_level[level - 1] / col_per_level[level - 1]
 	$cards.position.y = (screenSize.y / 2) - (rr * ((cardWidth.y + 35) * scl) / 2) + 80
 
-###########################################
-
-func throw_dagger(dagger_direction: Vector2):
-	if DAGGER:
-		var dagger = DAGGER.instance()
-		get_tree().current_scene.add_child(dagger)
-		dagger.global_position = self.global_position
-		
-		var dagger_rotation = dagger_direction.angle()
-		dagger.rotation = dagger_rotation
-		
-		attackTimer.start()
-
-##########################################
 
 func _on_card_click(_id) -> void:
 	# quando é clicado em uma carta
@@ -193,13 +183,20 @@ func _on_card_click(_id) -> void:
 	# Se já tenho duas cartas abertas
 	if card_opened.size() == 2:
 		# Vertifico se as duas são iguais
-		if card_opened[0] == card_opened[1]:
-			throw_dagger(dagger_direction)
-			# confirmo para o jogador que ele acertou
+		if card_opened[0] == card_opened[1]: # confirmo para o jogador que ele acertou
+			
 			$sfxRight.play()
+			
+			shoot(shoot)
+			
+			time = time_per_round
+			
+			
 			face_cards += 2 # apenas somo quantas quartas ele acertou
+			
 			combo += 1 # somo o combo
 			total += (points * combo) # multiplico a pontuação
+			
 			$ui/points.text = str(total)
 			_mark_card(_id) # marco a carta como concluída
 			card_opened.clear() # limpo as cartas abertas
@@ -219,14 +216,15 @@ func _on_card_click(_id) -> void:
 		
 		# Se as cartas viradas não forem iguais
 		else:
+			time = time_per_round
 			combo = 0 # quabra o combo, zerando ele
 			
 			total -= pointsOver # perde pontos
 			if total <= 0:
 				total = 0
-				if level > 1:
+				#if level > 1:
 					# Se zerar a pontução do level 2 em diante, GAME OVER
-					_game_over()
+					#_game_over()
 			$ui/points.text = str(total)
 			
 			# jogada errada, vira as cartas
@@ -238,3 +236,27 @@ func _on_card_click(_id) -> void:
 					c._hide()
 			# limpa as cartas abertas
 			card_opened.clear()
+
+export(PackedScene) var SHOOT: PackedScene = preload("res://scenes/projectiles/PlayerDagger.tscn")
+
+func shoot(_shoot):
+	if SHOOT:
+		var shoot = SHOOT.instance()
+		get_tree().current_scene.add_child(shoot)
+		shoot.global_position = self.global_position
+		
+		shoot.global_position = $player1/BulletPointt.global_position
+		
+func _on_level_shoot():
+	shoot(shoot)
+	
+	
+	
+######################################## player2 ######################################################
+
+func player2_turn():
+	shoot(shoot)
+	
+	
+
+######################################## player2 ######################################################
